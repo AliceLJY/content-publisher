@@ -53,11 +53,10 @@ After the script reports success:
 
 ## Signature Template
 
-The article signature is defined in:
-```
-~/.claude/projects/-Users-anxianjingya/memory/signature-template.html
-```
+**Auto-injected**: `publish-wechat.ts` reads `~/.content-publisher/signature.html` and appends it to the HTML content before creating the WeChat draft. No manual action needed.
 
-Use a single `<p>` tag with `<br>` line breaks (not multiple `<p>` tags — WeChat adds excessive paragraph spacing). Style: `font-size: 12px; line-height: 1.6; color: #b2b2b2;`
+The signature file uses a single `<p>` tag with `<br>` line breaks (not multiple `<p>` tags — WeChat adds excessive paragraph spacing). Style: `font-size: 12px; line-height: 1.6; color: #b2b2b2;`
+
+Source template also maintained at `~/.claude/projects/-Users-anxianjingya/memory/signature-template.html`. Keep both files in sync.
 
 Do not copy signatures from archived articles — they may use outdated formatting.

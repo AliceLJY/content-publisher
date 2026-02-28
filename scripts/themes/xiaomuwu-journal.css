@@ -1,0 +1,193 @@
+/**
+ * 🏠 小木屋手账 — auto-generated from wechat_editor_xiaoshiai.html
+ * Theme key: xiaomuwu-journal
+ */
+
+#output {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px 20px 36px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.8 !important;
+  color: #4A3728 !important;
+  background-color: #FFF8F0 !important;
+  word-wrap: break-word;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #8B4513 !important;
+  line-height: 1.3 !important;
+  margin: 36px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 3px dashed #D2A679;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #A0522D !important;
+  line-height: 1.35 !important;
+  margin: 30px 0 14px;
+  padding-left: 14px;
+  border-left: 5px solid #D2A679;
+  background-color: rgba(210, 166, 121, 0.08) !important;
+}
+
+h3 {
+  font-size: 19px;
+  font-weight: 600;
+  color: #6B4226 !important;
+  line-height: 1.4 !important;
+  margin: 26px 0 12px;
+  padding-left: 10px;
+  border-left: 3px solid #E8B87A;
+}
+
+h4 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #7B5B3A !important;
+  line-height: 1.45 !important;
+  margin: 22px 0 10px;
+}
+
+h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8B6914 !important;
+  line-height: 1.5 !important;
+  margin: 18px 0 9px;
+}
+
+h6 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #996633 !important;
+  line-height: 1.5 !important;
+  margin: 16px 0 8px;
+}
+
+p {
+  margin: 18px 0 !important;
+  line-height: 1.85 !important;
+  color: #4A3728 !important;
+  font-size: 16px;
+}
+
+strong {
+  font-weight: 700;
+  color: #8B4513 !important;
+  background-color: rgba(255, 200, 87, 0.25) !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+em {
+  font-style: italic;
+  color: #7B5B3A !important;
+}
+
+a {
+  color: #B8860B !important;
+  text-decoration: none;
+  border-bottom: 1px dashed #B8860B;
+  font-weight: 500;
+}
+
+ul {
+  margin: 18px 0;
+  padding-left: 28px;
+}
+
+ol {
+  margin: 18px 0;
+  padding-left: 28px;
+}
+
+li {
+  margin: 10px 0;
+  line-height: 1.8 !important;
+  color: #4A3728 !important;
+}
+
+blockquote {
+  margin: 20px 0;
+  padding: 14px 18px;
+  background-color: #FFF3E0 !important;
+  border-left: 5px solid #D2A679;
+  color: #6B4226 !important;
+  font-size: 16px;
+  line-height: 1.65 !important;
+  font-style: italic;
+  border-radius: 0 8px 8px 0;
+}
+
+code {
+  font-family: "SF Mono", Consolas, Monaco, monospace;
+  font-size: 14px;
+  padding: 2px 6px;
+  background-color: rgba(210, 166, 121, 0.15) !important;
+  color: #8B4513 !important;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+pre.code__pre, .hljs.code__pre {
+  margin: 24px 0;
+  padding: 20px;
+  background-color: #3E2723 !important;
+  color: #FFCCBC !important;
+  border-radius: 10px;
+  overflow-x: auto;
+  line-height: 1.55 !important;
+  box-shadow: 0 3px 12px rgba(139, 69, 19, 0.15);
+}
+
+hr {
+  margin: 36px auto;
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #D2A679, transparent);
+  max-width: 200px;
+}
+
+img {
+  max-width: 100%;
+  max-height: 500px !important;
+  height: auto;
+  display: block;
+  margin: 24px auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(139, 69, 19, 0.12);
+}
+
+table {
+  width: 100%;
+  margin: 24px 0;
+  border-collapse: collapse;
+  font-size: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, thead td {
+  background-color: #D2A679 !important;
+  color: #fff !important;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #E8D5B5;
+  color: #4A3728 !important;
+  background-color: #FFFBF5 !important;
+}
+
+tr {
+  border-bottom: 1px solid #E8D5B5;
+}

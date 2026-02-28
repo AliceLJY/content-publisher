@@ -19,6 +19,9 @@ Image generation + layout formatting + WeChat publishing + cleanup pipeline. Tak
 - **Duplicate title**: If frontmatter has `title:`, do NOT add `# Title` in body — publish-wechat.ts extracts title from frontmatter. Both = duplicate title
 - **Config**: `~/.content-publisher/.env` for WECHAT_APP_ID, WECHAT_APP_SECRET, GOOGLE_API_KEY
 - **Browser mode**: Not yet reimplemented (baoyu-skills removed). Use API mode
+- **Signature auto-inject**: `publish-wechat.ts` reads `~/.content-publisher/signature.html` and appends it before creating the draft. If signature is missing in published article, check this file exists
+- **YAML frontmatter quoting**: Titles with Chinese quotes `"..."` must use single-quote wrapping (`title: '...'`) to avoid YAML parse errors
+- **geek-light theme**: Not yet in `format-wechat.ts` built-in styles. Use `vibecoding-tech` or `wechat-tech` as alternatives for tech articles
 
 ### Cleanup
 - **Trash, not rm**: Move temp files to `~/.Trash/`, never `rm -rf`

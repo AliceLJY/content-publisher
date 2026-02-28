@@ -516,6 +516,17 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // ── Append signature ─────────────────────────────────────────────────
+
+  const sigPath = path.join(os.homedir(), ".content-publisher", "signature.html");
+  if (fs.existsSync(sigPath)) {
+    const sig = fs.readFileSync(sigPath, "utf-8").trim();
+    if (sig && !htmlContent.includes(sig.slice(0, 60))) {
+      htmlContent += `\n${sig}`;
+      console.error("[publish] Signature appended from ~/.content-publisher/signature.html");
+    }
+  }
+
   // ── Create draft ───────────────────────────────────────────────────────
 
   console.error("[publish] Creating draft...");
