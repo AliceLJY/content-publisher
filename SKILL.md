@@ -35,7 +35,7 @@ This skill handles everything AFTER the article text is finalized. For article w
 ## Core Principles
 
 1. **Input Validation** — Verify article.md has valid frontmatter (title required), check all image paths resolve, confirm no duplicate `# title` in body when frontmatter title exists
-2. **Local-First Scripts** — Use repo scripts (`scripts/gemini-image-gen.ts`, `scripts/format-wechat.ts`) directly via Bun. Never call baoyu-post-to-wechat as a skill
+2. **Local-First Scripts** — Use repo scripts (`scripts/gemini-image-gen.ts`, `scripts/format-wechat.ts`, `scripts/publish-wechat.ts`) directly via Bun
 3. **Checkpoints** — AskUserQuestion before publishing (confirm title, cover, theme). User sees the draft before it goes live
 4. **Trash Cleanup** — Move temp files to `~/.Trash/` after archiving. Never use `rm -rf`
 
@@ -61,7 +61,7 @@ Generate cover and illustrations using the 56-style auto-rotation system.
 
 **Save to**: `{topic-slug}/` working directory AND `~/Desktop/wechat_assets/`
 
-**Image placeholder format**: `WECHATIMGPH_x` (internal to baoyu scripts — article.md must use `![alt](path)` syntax, never raw placeholders)
+**Image placeholder format**: article.md must use `![alt](path)` syntax, never raw `WECHATIMGPH_x` placeholders
 
 See `references/image-generation.md` for full details.
 
@@ -69,7 +69,7 @@ See `references/image-generation.md` for full details.
 
 Apply one of 17 custom themes and publish to WeChat as draft.
 
-**Theme rotation**: Read `layout-style-catalog.md` for the 17 themes. Check `~/.openclaw-antigravity/workspace/images/layout-style-history.txt` for recent usage. Pick next in rotation, verify tone match. The 3 baoyu built-in themes (default/grace/simple) are NOT in rotation.
+**Theme rotation**: Read `layout-style-catalog.md` for the 17 themes. Check `~/.openclaw-antigravity/workspace/images/layout-style-history.txt` for recent usage. Pick next in rotation, verify tone match. The reserved themes (default/grace/simple) are NOT in rotation.
 
 Theme `ai-custom` (#17): AI generates a one-time custom layout based on article tone.
 
@@ -78,16 +78,11 @@ Theme `ai-custom` (#17): AI generates a one-time custom layout based on article 
 bun scripts/publish-wechat.ts <article.md> \
   --author "小试AI" --cover <cover.png> --theme <theme-key>
 ```
-Prerequisites: `~/.content-publisher/.env` (or `~/.baoyu-skills/.env`) with `WECHAT_APP_ID` and `WECHAT_APP_SECRET`, IP whitelist configured.
+Prerequisites: `~/.content-publisher/.env` with `WECHAT_APP_ID` and `WECHAT_APP_SECRET`, IP whitelist configured.
 
-**Browser mode** (fallback):
-```bash
-bun ./dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-article.ts \
-  --markdown <article.md> --theme <theme-key>
-```
-Prerequisites: Chrome with debug port 9222, WeChat backend logged in.
+**Browser mode**: Not yet implemented. Use API mode.
 
-**Decision rule**: Check `~/.content-publisher/.env` or `~/.baoyu-skills/.env` for `WECHAT_APP_ID` — present = API mode, absent = browser mode.
+**Decision rule**: Check `~/.content-publisher/.env` for `WECHAT_APP_ID`.
 
 See `references/layout-themes.md` and `references/publishing.md` for full details.
 
@@ -107,4 +102,4 @@ See `references/layout-themes.md` and `references/publishing.md` for full detail
 
 - This skill covers image generation, layout, publishing, and cleanup only
 - Article writing (research, drafting, editing) belongs to [content-alchemy](https://github.com/AliceLJY/content-alchemy)
-- baoyu-skills is included as a git submodule under `dependencies/`
+- Theme CSS files are managed in `scripts/themes/`

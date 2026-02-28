@@ -2,8 +2,8 @@
 /**
  * publish-wechat.ts - Publish article to WeChat Official Account via API
  *
- * Pure HTTP implementation (no Chrome needed). Uses our own format-wechat.ts
- * for markdown→HTML conversion instead of baoyu's md/render.ts.
+ * Pure HTTP implementation (no Chrome needed). Uses format-wechat.ts
+ * for markdown→HTML conversion.
  *
  * Usage:
  *   bun publish-wechat.ts <article.md> [options]
@@ -17,7 +17,7 @@
  *   --dry-run          Parse and render only, don't publish
  *   --help             Show this help
  *
- * Config: ~/.content-publisher/.env (fallback: ~/.baoyu-skills/.env)
+ * Config: ~/.content-publisher/.env
  *   WECHAT_APP_ID=xxx
  *   WECHAT_APP_SECRET=xxx
  */
@@ -94,16 +94,15 @@ function loadEnvFile(envPath: string): Record<string, string> {
 }
 
 function loadConfig(): WechatConfig {
-  const primary = loadEnvFile(path.join(os.homedir(), ".content-publisher", ".env"));
-  const fallback = loadEnvFile(path.join(os.homedir(), ".baoyu-skills", ".env"));
+  const env = loadEnvFile(path.join(os.homedir(), ".content-publisher", ".env"));
 
-  const appId = process.env.WECHAT_APP_ID || primary.WECHAT_APP_ID || fallback.WECHAT_APP_ID;
-  const appSecret = process.env.WECHAT_APP_SECRET || primary.WECHAT_APP_SECRET || fallback.WECHAT_APP_SECRET;
+  const appId = process.env.WECHAT_APP_ID || env.WECHAT_APP_ID;
+  const appSecret = process.env.WECHAT_APP_SECRET || env.WECHAT_APP_SECRET;
 
   if (!appId || !appSecret) {
     throw new Error(
       "Missing WECHAT_APP_ID or WECHAT_APP_SECRET.\n" +
-      "Create ~/.content-publisher/.env or ~/.baoyu-skills/.env with:\n" +
+      "Create ~/.content-publisher/.env with:\n" +
       "  WECHAT_APP_ID=your_app_id\n" +
       "  WECHAT_APP_SECRET=your_app_secret"
     );
@@ -349,7 +348,6 @@ Frontmatter Fields (markdown):
 Config File (in priority order):
   1. Environment variables (WECHAT_APP_ID, WECHAT_APP_SECRET)
   2. ~/.content-publisher/.env
-  3. ~/.baoyu-skills/.env (backward compat)
 
 Examples:
   bun publish-wechat.ts article.md

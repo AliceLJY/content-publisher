@@ -7,7 +7,7 @@
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --method cdp
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --aspect 2.5:1
  *
- * API key: reads GOOGLE_API_KEY from env or ~/.content-publisher/.env (fallback: ~/.baoyu-skills/.env)
+ * API key: reads GOOGLE_API_KEY from env or ~/.content-publisher/.env
  */
 import path from 'node:path';
 import { mkdir, writeFile, readFile, stat, readdir, rename } from 'node:fs/promises';
@@ -38,14 +38,8 @@ async function getApiKey(): Promise<string | null> {
   if (process.env.GOOGLE_API_KEY) return process.env.GOOGLE_API_KEY;
 
   try {
-    const primaryPath = path.join(process.env.HOME!, '.content-publisher', '.env');
-    const fallbackPath = path.join(process.env.HOME!, '.baoyu-skills', '.env');
-    let content: string;
-    try {
-      content = await readFile(primaryPath, 'utf-8');
-    } catch {
-      content = await readFile(fallbackPath, 'utf-8');
-    }
+    const envPath = path.join(process.env.HOME!, '.content-publisher', '.env');
+    const content = await readFile(envPath, 'utf-8');
     const match = content.match(/^GOOGLE_API_KEY=(.+)$/m);
     return match?.[1]?.trim() || null;
   } catch {

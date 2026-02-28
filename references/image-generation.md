@@ -35,11 +35,11 @@ Use nano-banana-pro to enhance image prompts before generation. This adds detail
 
 ## Tool Priority
 
-1. **baoyu gemini-image-gen.ts** (free, Gemini API):
+1. **gemini-image-gen.ts** (free, Gemini API):
    ```bash
    bun scripts/gemini-image-gen.ts --prompt "..." --output path.png --aspect 2.5:1
    ```
-   Reads `GOOGLE_API_KEY` from env or `~/.baoyu-skills/.env`.
+   Reads `GOOGLE_API_KEY` from env or `~/.content-publisher/.env`.
 
 2. **Gemini API direct** (if script fails): Call `generativelanguage.googleapis.com` directly with `gemini-3-pro-image-preview` model.
 

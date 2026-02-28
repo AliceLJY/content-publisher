@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Content Alchemy Setup Wizard"
+echo "🚀 Content Publisher Setup Wizard"
 echo "================================"
 echo ""
 
@@ -16,22 +16,13 @@ else
     echo "   ✅ Bun already installed"
 fi
 
-# Step 2: Clone Baoyu dependencies
+# Step 2: Install npm dependencies
 echo ""
-echo "Step 2: Downloading Baoyu scripts..."
-mkdir -p dependencies
-if [ -d "dependencies/baoyu-skills" ]; then
-    echo "   ✅ Baoyu scripts already exist"
-    echo "   Updating..."
-    cd dependencies/baoyu-skills
-    git pull origin main
-    cd ../..
-else
-    cd dependencies
-    git clone https://github.com/JimLiu/baoyu-skills.git
-    cd ..
-    echo "   ✅ Baoyu scripts downloaded"
-fi
+echo "Step 2: Installing dependencies..."
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+bun install
+echo "   ✅ Dependencies installed"
 
 # Step 3: Setup Chrome alias
 echo ""
@@ -54,16 +45,30 @@ fi
 # Step 4: Create directories
 echo ""
 echo "Step 4: Creating work directories..."
-mkdir -p output
-mkdir -p images
+mkdir -p scripts/themes
 echo "   ✅ Directories created"
+
+# Step 5: Create config template
+echo ""
+echo "Step 5: Checking WeChat config..."
+if [ ! -f "$HOME/.content-publisher/.env" ]; then
+    mkdir -p "$HOME/.content-publisher"
+    echo "# WeChat Official Account API credentials" > "$HOME/.content-publisher/.env"
+    echo "WECHAT_APP_ID=" >> "$HOME/.content-publisher/.env"
+    echo "WECHAT_APP_SECRET=" >> "$HOME/.content-publisher/.env"
+    echo "GOOGLE_API_KEY=" >> "$HOME/.content-publisher/.env"
+    echo "   ⚠️  Created ~/.content-publisher/.env — please fill in your credentials"
+else
+    echo "   ✅ Config file exists"
+fi
 
 echo ""
 echo "================================"
 echo "✅ Setup complete!"
 echo ""
 echo "📝 Next steps:"
-echo "   1. Restart terminal (or run: source $SHELL_RC)"
-echo "   2. Run: chrome-debug"
-echo "   3. Login to WeChat Official Accounts Platform"
-echo "   4. Test: ./scripts/doctor.sh"
+echo "   1. Fill in ~/.content-publisher/.env with your credentials"
+echo "   2. Restart terminal (or run: source $SHELL_RC)"
+echo "   3. Run: chrome-debug"
+echo "   4. Login to WeChat Official Accounts Platform"
+echo "   5. Test: ./scripts/doctor.sh"

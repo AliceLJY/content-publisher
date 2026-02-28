@@ -549,7 +549,7 @@ Recommended styles: xiaomuwu-journal, wechat-anthropic, sunset-orange, vibecodin
 Pipeline:
   1. sed replaces {{IMAGE_*}} placeholders in article.md
   2. bun format-wechat.ts --input article.md --output styled.html
-  3. bun wechat-article.ts --html styled.html
+  3. bun publish-wechat.ts styled.html
 `);
       process.exit(0);
     }
@@ -606,7 +606,7 @@ Pipeline:
   // Render markdown to HTML
   let html = md.render(body);
 
-  // Add data-local-path to local images (for wechat-article.ts --html pipeline)
+  // Add data-local-path to local images (for publish-wechat.ts --html pipeline)
   const inputDir = path.dirname(inputPath);
   html = html.replace(/<img\s+src="([^"]+)"/g, (match, src) => {
     if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) return match;
@@ -617,7 +617,7 @@ Pipeline:
   // Apply inline styles
   html = applyStyles(html, styleName);
 
-  // Build full HTML document (for parseHtmlMeta in wechat-article.ts)
+  // Build full HTML document (for publish-wechat.ts HTML input mode)
   const escapedTitle = title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const escapedAuthor = author.replace(/"/g, '&quot;');
   const fullHtml = `<!DOCTYPE html>

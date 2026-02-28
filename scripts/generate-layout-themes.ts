@@ -1,9 +1,9 @@
 /**
- * Generate baoyu-compatible CSS theme files from wechat_editor_xiaoshiai.html styles.
+ * Generate CSS theme files from wechat_editor_xiaoshiai.html styles.
  * Run: bun scripts/generate-layout-themes.ts
  *
  * Reads the STYLES object from the editor HTML, converts inline styles to CSS,
- * and writes theme files to the baoyu themes directory.
+ * and writes theme files to scripts/themes/.
  */
 
 import * as fs from "fs";
@@ -13,10 +13,7 @@ const EDITOR_HTML_PATH = path.resolve(
   process.env.HOME!,
   "Downloads/Gem素材/wechat_editor_xiaoshiai.html"
 );
-const THEMES_DIR = path.resolve(
-  __dirname,
-  "../dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/md/themes"
-);
+const THEMES_DIR = path.resolve(__dirname, "themes");
 
 const SELECTOR_MAP: Record<string, string> = {
   container: "#output",
@@ -117,7 +114,7 @@ function main() {
 
   for (const [key, { name, styles }] of Object.entries(allStyles)) {
     if (SKIP.has(key)) {
-      console.log(`  SKIP: ${key} (conflicts with built-in baoyu theme)`);
+      console.log(`  SKIP: ${key} (reserved name)`);
       continue;
     }
 

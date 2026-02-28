@@ -26,7 +26,7 @@ Image generation, layout formatting, and WeChat Official Account publishing pipe
 
 ### API Mode (recommended)
 
-Create `~/.baoyu-skills/.env`:
+Create `~/.content-publisher/.env`:
 ```
 WECHAT_APP_ID=your_app_id
 WECHAT_APP_SECRET=your_app_secret
@@ -38,11 +38,11 @@ Add your machine's outbound IP to the WeChat Official Account platform IP whitel
 ## Setup
 
 ```bash
-git clone --recurse-submodules https://github.com/AliceLJY/content-publisher.git
+git clone https://github.com/AliceLJY/content-publisher.git
 cd content-publisher
 bun install
-bun run setup
-bun run doctor   # verify environment
+bash scripts/setup.sh
+bash scripts/doctor.sh   # verify environment
 ```
 
 ## Usage
@@ -77,7 +77,10 @@ bash scripts/publish.sh article.md
 |---------|------|
 | [content-alchemy](https://github.com/AliceLJY/content-alchemy) | Upstream: research, writing, editing (Stages 1-5) |
 | **content-publisher** (this repo) | Downstream: images, layout, publishing, cleanup |
-| [baoyu-skills](https://github.com/JimLiu/baoyu-skills) | Git submodule: WeChat API/browser publishing scripts |
+
+## Acknowledgments
+
+This project was originally built on top of [baoyu-skills](https://github.com/JimLiu/baoyu-skills) by Jim Liu. The WeChat publishing pipeline, theme system, and markdown rendering approach were all inspired by baoyu's work. While content-publisher now uses its own implementations (`publish-wechat.ts`, `format-wechat.ts`), we stand on the shoulders of giants.
 
 ## License
 

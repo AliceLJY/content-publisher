@@ -2,17 +2,15 @@
 
 ## Theme System Overview
 
-The publishing pipeline supports 20 total themes: 3 baoyu built-in + 17 custom themes.
+The publishing pipeline supports 17 custom themes with auto-rotation.
 
-### baoyu Built-in Themes (NOT in rotation)
+### Reserved Themes (NOT in rotation)
 
 | Theme Key | Name | Notes |
 |-----------|------|-------|
-| default | Default | baoyu's default styling |
-| grace | Grace | Elegant serif theme |
-| simple | Simple | Minimal theme |
-
-These exist in baoyu-skills and can be used manually, but they are excluded from automatic rotation.
+| default | Default | Reserved name, not generated |
+| grace | Grace | Reserved name, not generated |
+| simple | Simple | Reserved name, not generated |
 
 ### 17 Custom Themes (in rotation)
 
@@ -74,8 +72,8 @@ bun scripts/generate-layout-themes.ts
 This script:
 1. Reads the STYLES object from the editor HTML (`wechat_editor_xiaoshiai.html`)
 2. Converts inline style definitions to CSS files
-3. Writes them to `dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/md/themes/`
-4. Skips default/grace/simple (would conflict with baoyu built-ins)
+3. Writes them to `scripts/themes/`
+4. Skips default/grace/simple (reserved names)
 5. Generates `layout-style-catalog.md` at repo root
 
 ## Inline Formatting

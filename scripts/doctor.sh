@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🔍 Content Alchemy Environment Check"
+echo "🔍 Content Publisher Environment Check"
 echo "===================================="
 echo ""
 
@@ -28,32 +28,26 @@ else
     echo "   → 注意：必须先完全退出 Chrome（Cmd+Q），再用上述命令启动"
 fi
 
-# Check 3: Baoyu Dependencies
+# Check 3: Core Scripts
 echo ""
-echo "📚 Checking Baoyu Scripts..."
-
-# Check multiple possible locations
-BAOYU_FOUND=false
-BAOYU_LOCATIONS=(
-    "dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-article.ts"
-    "$HOME/.gemini/skills/baoyu-post-to-wechat/scripts/wechat-article.ts"
-    "$HOME/.gemini/antigravity/scratch/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-article.ts"
+echo "📚 Checking Core Scripts..."
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+CORE_SCRIPTS=(
+    "scripts/publish-wechat.ts"
+    "scripts/format-wechat.ts"
+    "scripts/gemini-image-gen.ts"
+    "scripts/cdp.ts"
+    "scripts/generate-layout-themes.ts"
+    "scripts/simple-md-to-html.ts"
 )
 
-for path in "${BAOYU_LOCATIONS[@]}"; do
-    if [ -f "$path" ]; then
-        echo "   ✅ Baoyu scripts found at: $path"
-        BAOYU_FOUND=true
-        break
+for script in "${CORE_SCRIPTS[@]}"; do
+    if [ -f "$PROJECT_DIR/$script" ]; then
+        echo "   ✅ $script"
+    else
+        echo "   ❌ $script missing"
     fi
 done
-
-if [ "$BAOYU_FOUND" = false ]; then
-    echo "   ❌ Baoyu scripts not found in any expected location"
-    echo "   → Option 1 (Local): git clone https://github.com/JimLiu/baoyu-skills.git dependencies/baoyu-skills"
-    echo "   → Option 2 (Global): Already installed via Antigravity Skills"
-    exit 1
-fi
 
 # Check 4: Git
 echo ""
@@ -77,10 +71,9 @@ else
     echo "   → Install: brew install yt-dlp"
 fi
 
-# Check 6: npm Dependencies (for Baoyu scripts)
+# Check 6: npm Dependencies
 echo ""
 echo "📦 Checking npm dependencies..."
-PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 REQUIRED_MODULES=("front-matter" "highlight.js" "reading-time" "markdown-it" "fflate" "katex" "marked")
 MISSING_MODULES=()
 
@@ -102,14 +95,28 @@ fi
 # Check 7: Project Structure
 echo ""
 echo "📁 Checking Project Structure..."
-REQUIRED_FILES=("SKILL.md" "README.md" "docs/SETUP.md" "scripts/format-text.ts" "scripts/setup.sh")
+REQUIRED_FILES=("SKILL.md" "README.md" "scripts/format-wechat.ts" "scripts/setup.sh")
 for file in "${REQUIRED_FILES[@]}"; do
-    if [ -f "$file" ]; then
+    if [ -f "$PROJECT_DIR/$file" ]; then
         echo "   ✅ $file"
     else
         echo "   ❌ $file missing"
     fi
 done
+
+# Check 8: WeChat Config
+echo ""
+echo "🔑 Checking WeChat Config..."
+if [ -f "$HOME/.content-publisher/.env" ]; then
+    if grep -q "WECHAT_APP_ID" "$HOME/.content-publisher/.env"; then
+        echo "   ✅ ~/.content-publisher/.env has WECHAT_APP_ID"
+    else
+        echo "   ⚠️  ~/.content-publisher/.env exists but missing WECHAT_APP_ID"
+    fi
+else
+    echo "   ⚠️  ~/.content-publisher/.env not found"
+    echo "   → Create with WECHAT_APP_ID and WECHAT_APP_SECRET"
+fi
 
 echo ""
 echo "===================================="
@@ -118,4 +125,4 @@ echo ""
 echo "💡 Next steps:"
 echo "   1. If Chrome port is closed, run: chrome-debug"
 echo "   2. Login to WeChat Official Accounts Platform"
-echo "   3. Test with: alchemy \"测试主题\""
+echo "   3. Test with: publish article.md"
