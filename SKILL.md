@@ -75,10 +75,10 @@ Theme `ai-custom` (#17): AI generates a one-time custom layout based on article 
 
 **API mode** (preferred):
 ```bash
-bun ./dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-api.ts \
-  <article.md> --author "小试AI" --cover <cover.png> --theme <theme-key>
+bun scripts/publish-wechat.ts <article.md> \
+  --author "小试AI" --cover <cover.png> --theme <theme-key>
 ```
-Prerequisites: `~/.baoyu-skills/.env` with `WECHAT_APP_ID` and `WECHAT_APP_SECRET`, IP whitelist configured.
+Prerequisites: `~/.content-publisher/.env` (or `~/.baoyu-skills/.env`) with `WECHAT_APP_ID` and `WECHAT_APP_SECRET`, IP whitelist configured.
 
 **Browser mode** (fallback):
 ```bash
@@ -87,7 +87,7 @@ bun ./dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-artic
 ```
 Prerequisites: Chrome with debug port 9222, WeChat backend logged in.
 
-**Decision rule**: Check `~/.baoyu-skills/.env` for `WECHAT_APP_ID` — present = API mode, absent = browser mode.
+**Decision rule**: Check `~/.content-publisher/.env` or `~/.baoyu-skills/.env` for `WECHAT_APP_ID` — present = API mode, absent = browser mode.
 
 See `references/layout-themes.md` and `references/publishing.md` for full details.
 

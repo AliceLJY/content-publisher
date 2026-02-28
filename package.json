@@ -9,7 +9,8 @@
     "publish": "bash scripts/publish.sh",
     "image": "bun scripts/gemini-image-gen.ts",
     "md2html": "bun scripts/simple-md-to-html.ts",
-    "format": "bun scripts/format-wechat.ts"
+    "format": "bun scripts/format-wechat.ts",
+    "publish-api": "bun scripts/publish-wechat.ts"
   },
   "dependencies": {
     "fflate": "^0.8.2",

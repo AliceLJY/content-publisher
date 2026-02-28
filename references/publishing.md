@@ -4,20 +4,20 @@
 
 | | API Mode | Browser Mode |
 |---|----------|-------------|
-| **Command** | `wechat-api.ts` | `wechat-article.ts` |
+| **Command** | `publish-wechat.ts` | `wechat-article.ts` |
 | **Requires Chrome** | No | Yes (port 9222) |
 | **Requires Login** | No (uses app credentials) | Yes (WeChat backend session) |
 | **Focus Stealing** | No | Yes (clipboard operations) |
 | **Reliability** | High (pure HTTP) | Medium (DOM-dependent) |
 | **Use When** | `WECHAT_APP_ID` configured | API not configured |
 
-**Decision rule**: Check `~/.baoyu-skills/.env` for `WECHAT_APP_ID`. Present = API mode, absent = browser mode.
+**Decision rule**: Check `~/.content-publisher/.env` or `~/.baoyu-skills/.env` for `WECHAT_APP_ID`. Present = API mode, absent = browser mode.
 
 ## API Mode
 
 ### Prerequisites
 
-1. Create `~/.baoyu-skills/.env`:
+1. Create `~/.content-publisher/.env` (or `~/.baoyu-skills/.env` for backward compat):
    ```
    WECHAT_APP_ID=your_app_id
    WECHAT_APP_SECRET=your_app_secret
@@ -27,12 +27,13 @@
 ### Command
 
 ```bash
-bun ./dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/wechat-api.ts \
-  <article.md> \
+bun scripts/publish-wechat.ts <article.md> \
   --author "小试AI" \
   --cover <cover.png> \
   --theme <theme-key>
 ```
+
+Options: `--theme`, `--cover`, `--author`, `--summary`, `--dry-run`. Uses our own `format-wechat.ts` for markdown→HTML (not baoyu's `md/render.ts`).
 
 ### IP Whitelist Error
 
