@@ -1,0 +1,25 @@
+{
+  "name": "content-publisher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Image generation, layout formatting, and WeChat publishing pipeline",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "doctor": "bash scripts/doctor.sh",
+    "publish": "bash scripts/publish.sh",
+    "image": "bun scripts/gemini-image-gen.ts",
+    "md2html": "bun scripts/simple-md-to-html.ts",
+    "format": "bun scripts/format-wechat.ts"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "front-matter": "^4.0.2",
+    "highlight.js": "^11.11.1",
+    "juice": "^11.1.0",
+    "katex": "^0.16.28",
+    "markdown-it": "^14.1.0",
+    "markdown-it-footnote": "^4.0.0",
+    "marked": "^17.0.1",
+    "reading-time": "^1.5.0"
+  }
+}
