@@ -7,7 +7,7 @@
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --method cdp
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --aspect 2.5:1
  *
- * API key: reads GOOGLE_API_KEY from env or ~/.baoyu-skills/.env
+ * API key: reads GOOGLE_API_KEY from env or ~/.content-publisher/.env (fallback: ~/.baoyu-skills/.env)
  */
 import path from 'node:path';
 import { mkdir, writeFile, readFile, stat, readdir, rename } from 'node:fs/promises';
@@ -38,8 +38,14 @@ async function getApiKey(): Promise<string | null> {
   if (process.env.GOOGLE_API_KEY) return process.env.GOOGLE_API_KEY;
 
   try {
-    const envPath = path.join(process.env.HOME!, '.baoyu-skills', '.env');
-    const content = await readFile(envPath, 'utf-8');
+    const primaryPath = path.join(process.env.HOME!, '.content-publisher', '.env');
+    const fallbackPath = path.join(process.env.HOME!, '.baoyu-skills', '.env');
+    let content: string;
+    try {
+      content = await readFile(primaryPath, 'utf-8');
+    } catch {
+      content = await readFile(fallbackPath, 'utf-8');
+    }
     const match = content.match(/^GOOGLE_API_KEY=(.+)$/m);
     return match?.[1]?.trim() || null;
   } catch {
@@ -118,7 +124,7 @@ async function tryApiMethod(): Promise<boolean> {
 
 // 方法 2: CDP 浏览器模式（兜底）
 async function cdpMethod() {
-  const cdpPath = path.join(import.meta.dir, '../dependencies/baoyu-skills/skills/baoyu-post-to-wechat/scripts/cdp.ts');
+  const cdpPath = path.join(import.meta.dir, 'cdp.ts');
   const { tryConnectExisting, findExistingChromeDebugPort, launchChrome, getPageSession, evaluate, typeText, sleep } = await import(cdpPath);
 
   // 优先连接已有的 Chromium (port 9222)，再 fallback 到自动发现
