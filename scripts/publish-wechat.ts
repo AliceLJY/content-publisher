@@ -266,7 +266,7 @@ function renderMarkdown(mdPath: string, theme: string): string {
 
   console.error(`[publish] Rendering markdown with theme: ${theme}`);
   const result = spawnSync("bun", [formatScript, "--input", mdPath, "--output", htmlPath, "--style", theme], {
-    stdio: ["inherit", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"],
     cwd: path.dirname(mdPath),
   });
 
