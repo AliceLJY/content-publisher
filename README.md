@@ -91,7 +91,7 @@ content-publisher/
 ├── SKILL.md                          # Skill definition
 ├── scripts/
 │   ├── gemini-image-gen.ts           # 56-style image generation (Gemini API + CDP)
-│   ├── format-wechat.ts             # Markdown → styled HTML (16 built-in themes)
+│   ├── format-wechat.ts             # Markdown → styled HTML (17 built-in themes)
 │   ├── publish-wechat.ts            # WeChat API publishing + signature injection
 │   ├── simple-md-to-html.ts         # Lightweight MD→HTML converter
 │   ├── generate-layout-themes.ts    # Theme CSS generator
