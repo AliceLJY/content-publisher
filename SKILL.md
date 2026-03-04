@@ -46,9 +46,9 @@ Generate cover and illustrations using the 56-style auto-rotation system.
 **Style rotation**: Read `references/style-catalog.md` for the 56 styles. Check `~/.openclaw-antigravity/workspace/images/style-history.txt` for recent usage. Pick next in sequence, skip if tone mismatch with article.
 
 **Tool priority** (highest to lowest):
-1. `bun scripts/gemini-image-gen.ts --prompt "..." --output path.png --aspect 2.5:1` (Gemini API, free)
-2. Gemini API direct call (if script fails)
-3. CDP browser fallback (`--method cdp`)
+1. `bun scripts/gemini-image-gen.ts --prompt "..." --output path.png --aspect 2.5:1` (auto mode: web-free -> API -> CDP)
+2. The script's auto fallback chain: gemini-web-image (free, cookies) -> Gemini API (needs key) -> CDP browser
+3. Force specific method: `--method web-free` / `--method api` / `--method cdp`
 
 **Cover requirements**:
 - Must be **2.5:1 or 16:9** aspect ratio (WeChat cover requirement, landscape only)

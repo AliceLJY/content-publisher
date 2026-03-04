@@ -7,6 +7,8 @@ Image generation + layout formatting + WeChat publishing + cleanup pipeline. Tak
 ## Key Pitfalls
 
 ### Image Generation
+- **Fallback chain** (auto mode): gemini-web-image (free, cookies) -> Gemini API (needs GOOGLE_API_KEY) -> CDP browser
+- **gemini-web-image**: `~/gemini-web-image/` — uses Gemini web cookies, zero API cost. First-time: `bun ~/gemini-web-image/gemini-web-image.ts --login`. Also available as MCP tool `generate_image`
 - **Cover aspect ratio**: Must be 2.5:1 or 16:9. WeChat rejects portrait/square covers. Use `--aspect 2.5:1` with gemini-image-gen.ts. Fallback: `sips --cropToHeightWidth 410 1024 cover.png`
 - **Gemini Pro vs Fast**: Fast model cannot render Chinese text correctly. Always use Pro for images with Chinese characters
 - **CDP download**: Direct fetch of googleusercontent URLs returns 403. Must simulate hover + click download button via CDP, then pick up file from ~/Downloads

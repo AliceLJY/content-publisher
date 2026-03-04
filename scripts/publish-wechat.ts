@@ -195,12 +195,13 @@ async function uploadImagesInHtml(
   html: string,
   accessToken: string,
   baseDir: string
-): Promise<{ html: string; firstMediaId: string }> {
+): Promise<{ html: string; firstMediaId: string; failCount: number }> {
   const imgRegex = /<img[^>]*\ssrc=["']([^"']+)["'][^>]*>/gi;
   const matches = [...html.matchAll(imgRegex)];
-  if (matches.length === 0) return { html, firstMediaId: "" };
+  if (matches.length === 0) return { html, firstMediaId: "", failCount: 0 };
 
   let firstMediaId = "";
+  let failCount = 0;
   let updated = html;
 
   for (const match of matches) {
@@ -224,10 +225,14 @@ async function uploadImagesInHtml(
       if (!firstMediaId) firstMediaId = resp.media_id;
     } catch (err) {
       console.error(`[publish] Failed to upload ${imgPath}:`, err);
+      failCount++;
     }
   }
 
-  return { html: updated, firstMediaId };
+  if (failCount > 0) {
+    console.error(`[publish] WARNING: ${failCount} image(s) failed to upload`);
+  }
+  return { html: updated, firstMediaId, failCount };
 }
 
 async function createDraft(
@@ -484,9 +489,13 @@ async function main(): Promise<void> {
   // ── Upload images in HTML ──────────────────────────────────────────────
 
   console.error("[publish] Uploading images...");
-  const { html: processedHtml, firstMediaId } = await uploadImagesInHtml(
+  const { html: processedHtml, firstMediaId, failCount } = await uploadImagesInHtml(
     htmlContent, accessToken, baseDir
   );
+  if (failCount > 0) {
+    console.error(`[publish] FATAL: ${failCount} image(s) failed to upload. Aborting to prevent publishing with local file paths.`);
+    process.exit(1);
+  }
   htmlContent = processedHtml;
 
   // ── Upload cover ───────────────────────────────────────────────────────

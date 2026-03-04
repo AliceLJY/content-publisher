@@ -1,12 +1,14 @@
 #!/usr/bin/env bun
 /**
- * Gemini 生图 - 官方 API 直连 / CDP 浏览器兜底
+ * Gemini 生图 - gemini-web-image (免费) / 官方 API / CDP 浏览器兜底
  *
  * Usage:
  *   bun gemini-image-gen.ts --prompt "A red apple" --output /path/to/image.png
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --method cdp
  *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --aspect 2.5:1
+ *   bun gemini-image-gen.ts --prompt "..." --output /path/to/image.png --method web-free
  *
+ * Fallback chain (auto): web-free -> api -> cdp
  * API key: reads GOOGLE_API_KEY from env or ~/.content-publisher/.env
  */
 import path from 'node:path';
@@ -15,7 +17,7 @@ import { mkdir, writeFile, readFile, stat, readdir, rename } from 'node:fs/promi
 const args = {
   prompt: '',
   output: '',
-  method: 'auto', // auto | api | cdp
+  method: 'auto', // auto | web-free | api | cdp
   aspect: '',      // optional: "16:9", "2.5:1", "1:1" etc.
 };
 
@@ -27,7 +29,7 @@ for (let i = 2; i < process.argv.length; i++) {
 }
 
 if (!args.prompt || !args.output) {
-  console.error('Usage: bun gemini-image-gen.ts --prompt "A red apple" --output /path/to/image.png [--method auto|api|cdp] [--aspect 16:9]');
+  console.error('Usage: bun gemini-image-gen.ts --prompt "A red apple" --output /path/to/image.png [--method auto|web-free|api|cdp] [--aspect 16:9]');
   process.exit(1);
 }
 
@@ -44,6 +46,53 @@ async function getApiKey(): Promise<string | null> {
     return match?.[1]?.trim() || null;
   } catch {
     return null;
+  }
+}
+
+// 方法 0: gemini-web-image（免费，走网页版 cookies）
+async function tryWebFreeMethod(): Promise<boolean> {
+  const webImageScript = path.join(process.env.HOME!, 'gemini-web-image', 'gemini-web-image.ts');
+  try {
+    await stat(webImageScript);
+  } catch {
+    console.log('[WEB-FREE] gemini-web-image not installed');
+    return false;
+  }
+
+  // Build prompt with optional aspect ratio hint
+  let fullPrompt = args.prompt;
+  if (args.aspect) {
+    fullPrompt = `Generate an image with aspect ratio ${args.aspect}. ${fullPrompt}`;
+  }
+
+  console.log('[WEB-FREE] Generating image via gemini-web-image (free)...');
+
+  try {
+    const proc = Bun.spawn(
+      ['bun', 'run', webImageScript, '--prompt', fullPrompt, '--output', args.output],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
+
+    const exitCode = await proc.exited;
+    const stdout = await new Response(proc.stdout).text();
+    const stderr = await new Response(proc.stderr).text();
+
+    if (exitCode === 0) {
+      // Verify file exists and has content
+      try {
+        const fileStat = await stat(args.output);
+        if (fileStat.size > 0) {
+          console.log(`[WEB-FREE] Success: ${stdout.trim()}`);
+          return true;
+        }
+      } catch {}
+    }
+
+    console.log(`[WEB-FREE] Failed (exit ${exitCode}): ${(stderr || stdout).trim().substring(0, 200)}`);
+    return false;
+  } catch (err: any) {
+    console.error(`[WEB-FREE] Error: ${err.message}`);
+    return false;
   }
 }
 
@@ -299,7 +348,13 @@ async function cdpMethod() {
 }
 
 // 执行
-if (args.method === 'api') {
+if (args.method === 'web-free') {
+  const success = await tryWebFreeMethod();
+  if (!success) {
+    console.error('[WEB-FREE] Failed');
+    process.exit(1);
+  }
+} else if (args.method === 'api') {
   const success = await tryApiMethod();
   if (!success) {
     console.error('[API] Failed');
@@ -308,13 +363,18 @@ if (args.method === 'api') {
 } else if (args.method === 'cdp') {
   await cdpMethod();
 } else {
-  // auto: 先试官方 API，失败则 CDP
-  console.log('[AUTO] Trying Gemini API...');
-  const apiSuccess = await tryApiMethod();
+  // auto: web-free (免费) -> 官方 API -> CDP
+  console.log('[AUTO] Trying gemini-web-image (free)...');
+  const webFreeSuccess = await tryWebFreeMethod();
 
-  if (!apiSuccess) {
-    console.log('[AUTO] API failed, switching to CDP method...');
-    await cdpMethod();
+  if (!webFreeSuccess) {
+    console.log('[AUTO] Web-free failed, trying Gemini API...');
+    const apiSuccess = await tryApiMethod();
+
+    if (!apiSuccess) {
+      console.log('[AUTO] API failed, switching to CDP method...');
+      await cdpMethod();
+    }
   }
 }
 
