@@ -54,6 +54,7 @@ Generate cover and illustrations using the 56-style auto-rotation system.
 - Must be **2.5:1 or 16:9** aspect ratio (WeChat cover requirement, landscape only)
 - Use `--aspect 2.5:1` flag with gemini-image-gen.ts
 - Fallback crop: `sips --cropToHeightWidth 410 1024 cover.png`
+- Gemini web must use **Pro mode** — Fast mode produces garbled Chinese text in images
 
 **Image placement**: Cover immediately after title, illustrations at section breaks. NEVER pile images at the end.
 
@@ -83,6 +84,8 @@ Prerequisites: `~/.content-publisher/.env` with `WECHAT_APP_ID` and `WECHAT_APP_
 **Browser mode**: Not yet implemented. Use API mode.
 
 **Decision rule**: Check `~/.content-publisher/.env` for `WECHAT_APP_ID`.
+
+**IP whitelist error** `40164 invalid ip`: The error message contains the actual outbound IP — add it to WeChat Official Account platform whitelist.
 
 See `references/layout-themes.md` and `references/publishing.md` for full details.
 
