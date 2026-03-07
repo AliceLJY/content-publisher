@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import crypto from 'node:crypto';
 
 interface ImageInfo {
   placeholder: string;
@@ -18,12 +19,36 @@ interface ParseResult {
   contentImages: ImageInfo[];
 }
 
+interface CliArgs {
+  markdownPath: string;
+  outputPath?: string;
+}
+
 // 简化的 Markdown 转 HTML 工具
 // 专门为微信公众号优化
 
 function extractTitle(markdown: string): string {
   const h1Match = markdown.match(/^#\s+(.+)$/m);
   return h1Match ? h1Match[1].trim() : '';
+}
+
+function parseFrontmatter(markdown: string): { meta: Record<string, string>; body: string } {
+  const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!match) return { meta: {}, body: markdown };
+
+  const meta: Record<string, string> = {};
+  for (const line of match[1]!.split('\n')) {
+    const eq = line.indexOf(':');
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim();
+    let val = line.slice(eq + 1).trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    meta[key] = val;
+  }
+
+  return { meta, body: match[2]! };
 }
 
 function extractSummary(markdown: string): string {
@@ -55,18 +80,25 @@ function extractSummary(markdown: string): string {
   return '';
 }
 
-async function processMarkdown(markdownPath: string): Promise<ParseResult> {
-  const content = fs.readFileSync(markdownPath, 'utf-8');
-  const baseDir = path.dirname(markdownPath);
+function buildDefaultOutputPath(markdownPath: string): string {
   const tempDir = path.join(os.tmpdir(), 'wechat-article-images');
-
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
   }
 
-  const title = extractTitle(content);
-  const author = ''; // 可以从 frontmatter 提取
-  const summary = extractSummary(content);
+  const baseName = path.basename(markdownPath, path.extname(markdownPath)) || 'article';
+  const uniqueSuffix = `${Date.now()}-${process.pid}-${crypto.randomUUID().slice(0, 8)}`;
+  return path.join(tempDir, `${baseName}-${uniqueSuffix}.html`);
+}
+
+async function processMarkdown(markdownPath: string, outputPath?: string): Promise<ParseResult> {
+  const content = fs.readFileSync(markdownPath, 'utf-8');
+  const baseDir = path.dirname(markdownPath);
+  const { meta, body } = parseFrontmatter(content);
+
+  const title = meta.title || extractTitle(body);
+  const author = meta.author || '';
+  const summary = meta.summary || meta.description || meta.digest || extractSummary(body);
 
   // 处理图片: 替换为占位符
   // 支持标准 Markdown 格式: ![alt](path)
@@ -74,7 +106,7 @@ async function processMarkdown(markdownPath: string): Promise<ParseResult> {
   const images: Array<{ src: string; placeholder: string }> = [];
   let imageCounter = 0;
 
-  let modifiedMarkdown = content;
+  let modifiedMarkdown = body;
 
   // 1. 处理标准格式
   modifiedMarkdown = modifiedMarkdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
@@ -100,8 +132,8 @@ async function processMarkdown(markdownPath: string): Promise<ParseResult> {
 
   let html = marked.parse(modifiedMarkdown) as string;
 
-  // 读取专业的微信公众号样式
-  const stylesPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'wechat-styles.css');
+  // 读取仓库内默认主题样式
+  const stylesPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'themes', 'wechat-default.css');
   const wechatStyles = fs.readFileSync(stylesPath, 'utf-8');
 
   // 添加样式到 HTML
@@ -113,7 +145,8 @@ ${html}
   `;
 
   // 写入 HTML 文件
-  const htmlPath = path.join(tempDir, 'temp-article.html');
+  const htmlPath = outputPath ? path.resolve(outputPath) : buildDefaultOutputPath(markdownPath);
+  fs.mkdirSync(path.dirname(htmlPath), { recursive: true });
   fs.writeFileSync(htmlPath, html, 'utf-8');
 
   // 解析图片路径
@@ -147,28 +180,50 @@ ${html}
   };
 }
 
-async function main() {
-  const args = process.argv.slice(2);
-
-  if (args.length === 0 || args.includes('--help')) {
+function parseArgs(argv: string[]): CliArgs {
+  if (argv.length === 0 || argv.includes('--help') || argv.includes('-h')) {
     console.log(`Simple Markdown to WeChat HTML Converter
 
 Usage:
   bun simple-md-to-html.ts <markdown_file>
+  bun simple-md-to-html.ts <markdown_file> --output /path/to/output.html
 
-Output: JSON with title, htmlPath, and image placeholders
+Output: JSON with title, htmlPath, author, summary, and image placeholders
 `);
-    process.exit(args.includes('--help') ? 0 : 1);
+    process.exit(argv.length === 0 ? 1 : 0);
   }
 
-  const markdownPath = path.resolve(process.cwd(), args[0]);
+  const args: CliArgs = { markdownPath: '' };
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if ((arg === '--output' || arg === '-o') && argv[i + 1]) {
+      args.outputPath = argv[++i]!;
+    } else if (!arg.startsWith('-') && !args.markdownPath) {
+      args.markdownPath = arg;
+    } else {
+      console.error(`Unknown argument: ${arg}`);
+      process.exit(1);
+    }
+  }
+
+  if (!args.markdownPath) {
+    console.error('Error: markdown file path is required.');
+    process.exit(1);
+  }
+
+  return args;
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  const markdownPath = path.resolve(process.cwd(), args.markdownPath);
 
   if (!fs.existsSync(markdownPath)) {
     console.error(`File not found: ${markdownPath}`);
     process.exit(1);
   }
 
-  const result = await processMarkdown(markdownPath);
+  const result = await processMarkdown(markdownPath, args.outputPath);
   console.log(JSON.stringify(result, null, 2));
 }
 
