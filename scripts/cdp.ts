@@ -189,7 +189,7 @@ export async function findExistingChromeDebugPort(): Promise<number | null> {
     const cmd = process.platform === 'darwin'
       ? `lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | grep -i 'google\\|chrome' | awk '{print $9}' | sed 's/.*://'`
       : `ss -tlnp 2>/dev/null | grep -i chrome | awk '{print $4}' | sed 's/.*://'`;
-    const output = execSync(cmd, { encoding: 'utf-8', timeout: 5_000 }).trim();
+    const output = execSync(cmd, { encoding: 'utf-8', timeout: 5_000, stdio: 'pipe' }).trim();
     if (!output) return null;
     const ports = output.split('\n').map(p => parseInt(p, 10)).filter(p => !isNaN(p) && p > 0);
     for (const port of ports) {

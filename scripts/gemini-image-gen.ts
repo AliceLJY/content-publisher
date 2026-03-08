@@ -127,7 +127,13 @@ async function tryApiMethod(): Promise<boolean> {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error(`[API] HTTP ${response.status}: ${error.substring(0, 200)}`);
+      const hint = response.status === 403 ? ' (API key may be invalid)' :
+                   response.status === 429 ? ' (quota exhausted, wait or check billing)' :
+                   response.status === 400 ? ' (bad request, check prompt)' : '';
+      const summary = error.length > 300
+        ? error.substring(0, 300) + `... [${error.length} bytes total]`
+        : error;
+      console.error(`[API] HTTP ${response.status}${hint}: ${summary}`);
       return false;
     }
 
@@ -361,7 +367,12 @@ if (args.method === 'web-free') {
     process.exit(1);
   }
 } else if (args.method === 'cdp') {
-  await cdpMethod();
+  try {
+    await cdpMethod();
+  } catch (err: any) {
+    console.error(`[CDP] Fatal: ${err.message}`);
+    process.exit(1);
+  }
 } else {
   // auto: web-free (免费) -> 官方 API -> CDP
   console.log('[AUTO] Trying gemini-web-image (free)...');
@@ -373,7 +384,13 @@ if (args.method === 'web-free') {
 
     if (!apiSuccess) {
       console.log('[AUTO] API failed, switching to CDP method...');
-      await cdpMethod();
+      try {
+        await cdpMethod();
+      } catch (err: any) {
+        console.error(`[CDP] Fatal: ${err.message}`);
+        console.error('[AUTO] All 3 methods failed. Run doctor.sh to diagnose.');
+        process.exit(1);
+      }
     }
   }
 }
