@@ -1,0 +1,167 @@
+/**
+ * 🖋️ 水墨宣纸 — ai-custom one-time theme
+ * Article: 三八妇女节的注脚，我自己写
+ * Mood: 安静、个人化、工笔仕女、暖米色宣纸
+ */
+
+#output {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px 20px 36px 20px;
+  font-family: "Songti SC", "STSong", "SimSun", "PingFang SC", "Hiragino Sans GB", serif;
+  font-size: 16px;
+  line-height: 1.9 !important;
+  color: #2E1F0F !important;
+  background-color: #F7F3EC !important;
+  word-wrap: break-word;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #3A2210 !important;
+  line-height: 1.35 !important;
+  margin: 36px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #C8B090;
+  letter-spacing: 0.05em;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #5A3A20 !important;
+  line-height: 1.4 !important;
+  margin: 30px 0 14px;
+  padding: 0 0 6px 12px;
+  border-left: 3px solid #B8986A;
+  background: transparent !important;
+  letter-spacing: 0.03em;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6A4A2A !important;
+  line-height: 1.45 !important;
+  margin: 26px 0 12px;
+}
+
+h4, h5, h6 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #7A5A3A !important;
+  margin: 18px 0 9px;
+}
+
+p {
+  margin: 16px 0 !important;
+  line-height: 1.95 !important;
+  color: #2E1F0F !important;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+strong {
+  font-weight: 700;
+  color: #5A3010 !important;
+  background-color: transparent !important;
+  padding: 0;
+}
+
+em {
+  font-style: italic;
+  color: #7A5030 !important;
+}
+
+a {
+  color: #8B6040 !important;
+  text-decoration: none;
+  border-bottom: 1px solid #C8A070;
+}
+
+ul, ol {
+  margin: 16px 0;
+  padding-left: 28px;
+}
+
+li {
+  margin: 8px 0;
+  line-height: 1.85 !important;
+  color: #2E1F0F !important;
+}
+
+blockquote {
+  margin: 22px 0;
+  padding: 14px 20px;
+  background-color: #EFE8D8 !important;
+  border-left: 4px solid #B8986A;
+  color: #4A3020 !important;
+  font-size: 15.5px;
+  line-height: 1.75 !important;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+}
+
+code {
+  font-family: "SF Mono", Consolas, Monaco, monospace;
+  font-size: 14px;
+  padding: 2px 6px;
+  background-color: #EDE5D4 !important;
+  color: #5A3A1A !important;
+  border-radius: 3px;
+}
+
+pre.code__pre, .hljs.code__pre {
+  margin: 24px 0;
+  padding: 20px;
+  background-color: #1E1208 !important;
+  color: #E8D8B8 !important;
+  border-radius: 6px;
+  overflow-x: auto;
+  line-height: 1.55 !important;
+}
+
+hr {
+  margin: 32px auto;
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #C8A878, #B89060, #C8A878, transparent);
+  max-width: 160px;
+}
+
+img {
+  max-width: 100%;
+  max-height: 500px !important;
+  height: auto;
+  display: block;
+  margin: 24px auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(80, 50, 20, 0.12);
+}
+
+table {
+  width: 100%;
+  margin: 24px 0;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+th, thead td {
+  background-color: #8B6A40 !important;
+  color: #F7F3EC !important;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #D8C8A8;
+  color: #2E1F0F !important;
+  background-color: #FAF7F0 !important;
+}
+
+tr {
+  border-bottom: 1px solid #D8C8A8;
+}
