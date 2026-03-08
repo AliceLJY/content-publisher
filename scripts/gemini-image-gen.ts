@@ -40,7 +40,8 @@ async function getApiKey(): Promise<string | null> {
   if (process.env.GOOGLE_API_KEY) return process.env.GOOGLE_API_KEY;
 
   try {
-    const envPath = path.join(process.env.HOME!, '.content-publisher', '.env');
+    const configDir = process.env.CONTENT_PUBLISHER_CONFIG_DIR || path.join(process.env.HOME!, '.content-publisher');
+    const envPath = path.join(configDir, '.env');
     const content = await readFile(envPath, 'utf-8');
     const match = content.match(/^GOOGLE_API_KEY=(.+)$/m);
     return match?.[1]?.trim() || null;
@@ -51,7 +52,7 @@ async function getApiKey(): Promise<string | null> {
 
 // 方法 0: gemini-web-image（免费，走网页版 cookies）
 async function tryWebFreeMethod(): Promise<boolean> {
-  const webImageScript = path.join(process.env.HOME!, 'gemini-web-image', 'gemini-web-image.ts');
+  const webImageScript = process.env.GEMINI_WEB_IMAGE_SCRIPT || path.join(process.env.HOME!, 'gemini-web-image', 'gemini-web-image.ts');
   try {
     await stat(webImageScript);
   } catch {
@@ -309,7 +310,7 @@ async function cdpMethod() {
     await sleep(2000);
 
     console.log('[CDP] Waiting for download to complete...');
-    const downloadDir = path.join(process.env.HOME!, 'Downloads');
+    const downloadDir = process.env.DOWNLOAD_DIR || path.join(process.env.HOME!, 'Downloads');
 
     let downloadedFile = null;
     for (let i = 0; i < 10; i++) {

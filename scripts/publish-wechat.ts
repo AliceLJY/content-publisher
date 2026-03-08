@@ -94,7 +94,8 @@ function loadEnvFile(envPath: string): Record<string, string> {
 }
 
 function loadConfig(): WechatConfig {
-  const env = loadEnvFile(path.join(os.homedir(), ".content-publisher", ".env"));
+  const configDir = process.env.CONTENT_PUBLISHER_CONFIG_DIR || path.join(os.homedir(), ".content-publisher");
+  const env = loadEnvFile(path.join(configDir, ".env"));
 
   const appId = process.env.WECHAT_APP_ID || env.WECHAT_APP_ID;
   const appSecret = process.env.WECHAT_APP_SECRET || env.WECHAT_APP_SECRET;
@@ -527,7 +528,8 @@ async function main(): Promise<void> {
 
   // ── Append signature ─────────────────────────────────────────────────
 
-  const sigPath = path.join(os.homedir(), ".content-publisher", "signature.html");
+  const sigConfigDir = process.env.CONTENT_PUBLISHER_CONFIG_DIR || path.join(os.homedir(), ".content-publisher");
+  const sigPath = path.join(sigConfigDir, "signature.html");
   if (fs.existsSync(sigPath)) {
     const sig = fs.readFileSync(sigPath, "utf-8").trim();
     if (sig && !htmlContent.includes(sig.slice(0, 60))) {

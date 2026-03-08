@@ -9,7 +9,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const EDITOR_HTML_PATH = path.resolve(
+const EDITOR_HTML_PATH = process.env.EDITOR_HTML_PATH || path.resolve(
   process.env.HOME!,
   "Downloads/Gem素材/wechat_editor_xiaoshiai.html"
 );

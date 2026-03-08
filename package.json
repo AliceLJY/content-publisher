@@ -10,7 +10,8 @@
     "image": "bun scripts/gemini-image-gen.ts",
     "md2html": "bun scripts/simple-md-to-html.ts",
     "format": "bun scripts/format-wechat.ts",
-    "publish-api": "bun scripts/publish-wechat.ts"
+    "publish-api": "bun scripts/publish-wechat.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "fflate": "^0.8.2",
