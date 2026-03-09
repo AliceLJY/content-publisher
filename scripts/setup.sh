@@ -35,11 +35,10 @@ fi
 ALIAS_LINE='alias chrome-debug="/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222 --user-data-dir=\"\$HOME/chrome-debug-profile\" &"'
 
 if grep -q "chrome-debug" "$SHELL_RC"; then
-    echo "   ✅ Alias already exists"
+    echo "   ✅ Alias already exists in $SHELL_RC"
 else
-    echo "$ALIAS_LINE" >> "$SHELL_RC"
-    echo "   ✅ Alias added to $SHELL_RC"
-    echo "   ⚠️  Run: source $SHELL_RC"
+    echo "   Add this line to $SHELL_RC if you need Chrome debug mode:"
+    echo "   $ALIAS_LINE"
 fi
 
 # Step 4: Create directories
