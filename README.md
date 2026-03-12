@@ -162,7 +162,7 @@ content-publisher/
 | [openclaw-worker](https://github.com/AliceLJY/openclaw-worker) | Task API and Docker Compose for OpenClaw |
 | [openclaw-cli-bridge](https://github.com/AliceLJY/openclaw-cli-bridge) | Three-way bridge for `/cc`, `/codex`, and `/gemini` |
 | [digital-clone-skill](https://github.com/AliceLJY/digital-clone-skill) | Build digital clones from corpus data |
-| [local-memory](https://github.com/AliceLJY/local-memory) | Local AI conversation search |
+| [recallnest](https://github.com/AliceLJY/recallnest) | MCP-native memory workbench for AI conversations |
 | [cc-shell](https://github.com/AliceLJY/cc-shell) | Lightweight Claude Code chat UI |
 | [telegram-ai-bridge](https://github.com/AliceLJY/telegram-ai-bridge) | Telegram bots for Claude, Codex, and Gemini |
 | [telegram-cli-bridge](https://github.com/AliceLJY/telegram-cli-bridge) | Telegram CLI bridge for the Gemini CLI path |
