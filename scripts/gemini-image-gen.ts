@@ -11,6 +11,7 @@
  * Fallback chain (auto): web-free -> api -> cdp
  * API key: reads GOOGLE_API_KEY from env or ~/.content-publisher/.env
  */
+import fs from 'node:fs';
 import path from 'node:path';
 import { mkdir, writeFile, readFile, stat, readdir, rename } from 'node:fs/promises';
 
@@ -19,6 +20,10 @@ const args = {
   output: '',
   method: 'auto', // auto | web-free | api | cdp
   aspect: '',      // optional: "16:9", "2.5:1", "1:1" etc.
+  slug: '',
+  styleNumber: '',
+  styleName: '',
+  historyFile: '',
 };
 
 for (let i = 2; i < process.argv.length; i++) {
@@ -26,6 +31,10 @@ for (let i = 2; i < process.argv.length; i++) {
   else if (process.argv[i] === '--output' || process.argv[i] === '-o') args.output = process.argv[++i] || '';
   else if (process.argv[i] === '--method') args.method = process.argv[++i] || 'auto';
   else if (process.argv[i] === '--aspect') args.aspect = process.argv[++i] || '';
+  else if (process.argv[i] === '--slug') args.slug = process.argv[++i] || '';
+  else if (process.argv[i] === '--style-number') args.styleNumber = process.argv[++i] || '';
+  else if (process.argv[i] === '--style-name') args.styleName = process.argv[++i] || '';
+  else if (process.argv[i] === '--history-file') args.historyFile = process.argv[++i] || '';
 }
 
 if (!args.prompt || !args.output) {
@@ -34,6 +43,43 @@ if (!args.prompt || !args.output) {
 }
 
 await mkdir(path.dirname(args.output), { recursive: true });
+
+function formatDate(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function inferSlug(outputPath: string): string {
+  const parent = path.basename(path.dirname(outputPath));
+  return parent && parent !== '.' ? parent : path.basename(outputPath, path.extname(outputPath));
+}
+
+function appendStyleHistory(): void {
+  const slug = args.slug || inferSlug(args.output);
+  const styleName = args.styleName.trim();
+  if (!slug || !styleName) return;
+
+  const styleNumber = args.styleNumber.trim();
+  const historyPath = args.historyFile || path.join(process.env.HOME!, '.openclaw-antigravity', 'workspace', 'images', 'style-history.txt');
+  const line = styleNumber
+    ? `${formatDate()} ${slug} #${styleNumber.padStart(2, '0')} ${styleName}`
+    : `${formatDate()} ${slug} ${styleName}`;
+  const existing = fs.existsSync(historyPath) ? fs.readFileSync(historyPath, 'utf-8').split('\n').filter(Boolean) : [];
+  const comments = existing.filter((entry) => entry.startsWith('#'));
+  const entries = existing.filter((entry) => entry && !entry.startsWith('#'));
+  if (entries.includes(line)) return;
+
+  const nextContent = [
+    ...(comments.length ? comments : [
+      '# 风格轮换记录（最近20条，自动维护）',
+      '# 格式：日期 slug #编号 风格名',
+    ]),
+    ...[...entries, line].slice(-20),
+  ].join('\n') + '\n';
+
+  fs.mkdirSync(path.dirname(historyPath), { recursive: true });
+  fs.writeFileSync(historyPath, nextContent, 'utf-8');
+  console.log(`[HISTORY] Style recorded: ${line}`);
+}
 
 // Load API key from env or .env file
 async function getApiKey(): Promise<string | null> {
@@ -398,3 +444,4 @@ if (args.method === 'web-free') {
 
 const fileStat = await stat(args.output);
 console.log(`Image saved: ${args.output} (${(fileStat.size / 1024).toFixed(1)}KB)`);
+appendStyleHistory();

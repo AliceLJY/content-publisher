@@ -58,7 +58,7 @@ GOOGLE_API_KEY=your_gemini_key
 - 环境文件：`~/.content-publisher/.env`
 - 签名文件：`~/.content-publisher/signature.html`
 - 微信素材目录：`~/Desktop/wechat_assets/`
-- 文章归档目录：`~/Downloads/article-archive/all/`
+- 文章归档目录：`~/Desktop/article-archive/`（文件名使用文章标题）
 - 配图风格历史：`~/.openclaw-antigravity/workspace/images/style-history.txt`
 - 排版风格历史：`~/.openclaw-antigravity/workspace/images/layout-style-history.txt`
 - 清理时移动到：`~/.Trash/`

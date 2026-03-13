@@ -70,6 +70,8 @@ const UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/material/add_material";
 const DRAFT_URL = "https://api.weixin.qq.com/cgi-bin/draft/add";
 
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const LAYOUT_CATALOG_PATH = path.resolve(SCRIPT_DIR, "..", "layout-style-catalog.md");
+const LAYOUT_HISTORY_PATH = path.join(os.homedir(), ".openclaw-antigravity", "workspace", "images", "layout-style-history.txt");
 
 // ── .env loader ──────────────────────────────────────────────────────────────
 
@@ -269,9 +271,13 @@ async function createDraft(
 function renderMarkdown(mdPath: string, theme: string): string {
   const formatScript = path.join(SCRIPT_DIR, "format-wechat.ts");
   const htmlPath = mdPath.replace(/\.md$/i, ".html");
+  // Reuse the current Bun runtime so task-api shells do not need PATH to find `bun`.
+  const bunExecutable = process.execPath && path.basename(process.execPath).startsWith("bun")
+    ? process.execPath
+    : "bun";
 
   console.error(`[publish] Rendering markdown with theme: ${theme}`);
-  const result = spawnSync("bun", [formatScript, "--input", mdPath, "--output", htmlPath, "--style", theme], {
+  const result = spawnSync(bunExecutable, [formatScript, "--input", mdPath, "--output", htmlPath, "--style", theme], {
     stdio: ["ignore", "pipe", "pipe"],
     cwd: path.dirname(mdPath),
   });
@@ -324,6 +330,77 @@ function parseFrontmatter(content: string): { meta: Record<string, string>; body
     meta[key] = val;
   }
   return { meta, body: match[2]! };
+}
+
+function inferSlugFromPath(filePath: string): string {
+  const dir = path.basename(path.dirname(filePath));
+  if (dir && dir !== "." && dir !== path.sep) return dir;
+  return path.basename(filePath, path.extname(filePath));
+}
+
+function formatDate(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function readLayoutCatalog(): Record<string, { number: string; label: string }> {
+  if (!fs.existsSync(LAYOUT_CATALOG_PATH)) return {};
+
+  const entries: Record<string, { number: string; label: string }> = {};
+  for (const line of fs.readFileSync(LAYOUT_CATALOG_PATH, "utf-8").split("\n")) {
+    const match = line.match(/^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/);
+    if (!match) continue;
+    const number = match[1]!.padStart(2, "0");
+    const key = match[2]!.trim();
+    const label = match[3]!.trim();
+    if (key !== "#" && key !== "---") {
+      entries[key] = { number, label };
+    }
+  }
+  return entries;
+}
+
+function appendHistoryLine(
+  historyPath: string,
+  line: string,
+  headerLines: string[],
+  keepLast = 20
+): void {
+  const existing = fs.existsSync(historyPath)
+    ? fs.readFileSync(historyPath, "utf-8").split("\n").filter(Boolean)
+    : [];
+  const comments = existing.filter((entry) => entry.startsWith("#"));
+  const entries = existing.filter((entry) => entry && !entry.startsWith("#"));
+  if (entries.includes(line)) return;
+
+  const nextContent = [
+    ...(comments.length ? comments : headerLines),
+    ...[...entries, line].slice(-keepLast),
+  ].join("\n") + "\n";
+
+  fs.mkdirSync(path.dirname(historyPath), { recursive: true });
+  fs.writeFileSync(historyPath, nextContent, "utf-8");
+}
+
+function logThemeSelection(filePath: string, themeKey: string): void {
+  const slug = inferSlugFromPath(filePath);
+  if (!slug || !themeKey) return;
+
+  const catalog = readLayoutCatalog();
+  const theme = catalog[themeKey];
+  const line = theme
+    ? `${formatDate()} ${slug} #${theme.number} ${themeKey} ${theme.label}`
+    : `${formatDate()} ${slug} ${themeKey}`;
+
+  appendHistoryLine(
+    LAYOUT_HISTORY_PATH,
+    line,
+    [
+      "# 排版风格轮换记录（最近20条，自动维护）",
+      "# 格式：日期 slug #编号 theme-key 展示名",
+    ],
+    20
+  );
+  console.error(`[publish] Theme history updated: ${line}`);
 }
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
@@ -549,6 +626,8 @@ async function main(): Promise<void> {
     digest: digest || undefined,
   });
 
+  logThemeSelection(filePath, args.theme);
+
   console.log(JSON.stringify({
     success: true,
     media_id: result.media_id,
@@ -556,6 +635,26 @@ async function main(): Promise<void> {
   }, null, 2));
 
   console.error(`[publish] Draft created! media_id: ${result.media_id}`);
+
+  // ── Post-publish: archive + corpus append ─────────────────────────────
+  const archiveScript = path.join(SCRIPT_DIR, "archive-article.ts");
+  const srcForArchive = filePath.endsWith(".html")
+    ? filePath.replace(/\.html$/i, ".md")
+    : filePath;
+  if (fs.existsSync(archiveScript) && fs.existsSync(srcForArchive)) {
+    const bunExe = process.execPath && path.basename(process.execPath).startsWith("bun")
+      ? process.execPath
+      : "bun";
+    const archiveResult = spawnSync(bunExe, [archiveScript, srcForArchive], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    if (archiveResult.status === 0) {
+      const out = archiveResult.stdout?.toString().trim();
+      console.error(`[publish] Auto-archived: ${out}`);
+    } else {
+      console.error(`[publish] Archive failed: ${archiveResult.stderr?.toString()}`);
+    }
+  }
 }
 
 await main().catch((err) => {

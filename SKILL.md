@@ -46,7 +46,7 @@ Generate cover and illustrations using the 56-style auto-rotation system.
 **Style rotation**: Read `references/style-catalog.md` for the 56 styles. Check `~/.openclaw-antigravity/workspace/images/style-history.txt` for recent usage. Pick next in sequence, skip if tone mismatch with article.
 
 **Tool priority** (highest to lowest):
-1. `bun scripts/gemini-image-gen.ts --prompt "..." --output path.png --aspect 2.5:1` (auto mode: web-free -> API -> CDP)
+1. `bun scripts/gemini-image-gen.ts --prompt "..." --output path.png --aspect 2.5:1 --slug <slug> --style-number <NN> --style-name "<style>"` (auto mode: web-free -> API -> CDP, and auto-log style history)
 2. The script's auto fallback chain: gemini-web-image (free, cookies) -> Gemini API (needs key) -> CDP browser
 3. Force specific method: `--method web-free` / `--method api` / `--method cdp`
 
@@ -91,7 +91,7 @@ See `references/layout-themes.md` and `references/publishing.md` for full detail
 
 ## Phase 3: Archive and Cleanup
 
-1. **Archive article.md** to `~/Downloads/article-archive/all/` with date prefix: `YYYY-MM-DD-{slug}.md`
+1. **Archive article.md** with `bun scripts/archive-article.ts <article.md>` so the filename uses the Chinese article title
 2. **Append to digital clone corpus** if applicable
 3. **Move temp files** to `~/.Trash/` (working directory images, intermediate HTML). Never `rm -rf`
 4. **Log** style and theme selections to their respective history files

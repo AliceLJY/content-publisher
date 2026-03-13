@@ -58,7 +58,7 @@ Required configuration details:
 - Env file: `~/.content-publisher/.env`
 - Signature file: `~/.content-publisher/signature.html`
 - WeChat asset directory: `~/Desktop/wechat_assets/`
-- Article archive: `~/Downloads/article-archive/all/`
+- Article archive: `~/Desktop/article-archive/` (filename = article title)
 - Image style history: `~/.openclaw-antigravity/workspace/images/style-history.txt`
 - Layout style history: `~/.openclaw-antigravity/workspace/images/layout-style-history.txt`
 - Trash cleanup target: `~/.Trash/`
