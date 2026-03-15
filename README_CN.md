@@ -162,7 +162,7 @@ content-publisher/
 | [openclaw-worker](https://github.com/AliceLJY/openclaw-worker) | OpenClaw 的任务 API 和 Docker Compose |
 | [openclaw-cli-bridge](https://github.com/AliceLJY/openclaw-cli-bridge) | `/cc`、`/codex`、`/gemini` 三路桥接 |
 | [digital-clone-skill](https://github.com/AliceLJY/digital-clone-skill) | 从语料构建数字分身 |
-| [local-memory](https://github.com/AliceLJY/local-memory) | 本地 AI 对话搜索 |
+| [recallnest](https://github.com/AliceLJY/recallnest) | MCP 记忆工作台（LanceDB + Jina） |
 | [cc-shell](https://github.com/AliceLJY/cc-shell) | 轻量 Claude Code 聊天界面 |
 | [telegram-ai-bridge](https://github.com/AliceLJY/telegram-ai-bridge) | Claude、Codex、Gemini 的 Telegram 机器人 |
 | [telegram-cli-bridge](https://github.com/AliceLJY/telegram-cli-bridge) | 面向 Gemini CLI 路径的 Telegram CLI 桥 |
