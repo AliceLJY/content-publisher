@@ -159,8 +159,7 @@ content-publisher/
 |------|------|
 | [content-alchemy](https://github.com/AliceLJY/content-alchemy) | Upstream research and writing |
 | **content-publisher** (this repo) | Images, layout, publishing, archive, cleanup |
-| [openclaw-worker](https://github.com/AliceLJY/openclaw-worker) | Task API and Docker Compose for OpenClaw |
-| [openclaw-cli-bridge](https://github.com/AliceLJY/openclaw-cli-bridge) | Three-way bridge for `/cc`, `/codex`, and `/gemini` |
+| [openclaw-tunnel](https://github.com/AliceLJY/openclaw-tunnel) | Docker-to-host tunnel for `/cc`, `/codex`, `/gemini` |
 | [digital-clone-skill](https://github.com/AliceLJY/digital-clone-skill) | Build digital clones from corpus data |
 | [recallnest](https://github.com/AliceLJY/recallnest) | MCP-native memory workbench for AI conversations |
 | [cc-shell](https://github.com/AliceLJY/cc-shell) | Lightweight Claude Code chat UI |

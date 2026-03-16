@@ -159,8 +159,7 @@ content-publisher/
 |------|------|
 | [content-alchemy](https://github.com/AliceLJY/content-alchemy) | 上游调研与写作 |
 | **content-publisher**（本仓库） | 配图、排版、发布、归档、清理 |
-| [openclaw-worker](https://github.com/AliceLJY/openclaw-worker) | OpenClaw 的任务 API 和 Docker Compose |
-| [openclaw-cli-bridge](https://github.com/AliceLJY/openclaw-cli-bridge) | `/cc`、`/codex`、`/gemini` 三路桥接 |
+| [openclaw-tunnel](https://github.com/AliceLJY/openclaw-tunnel) | Docker↔宿主机 CLI 桥接（/cc /codex /gemini） |
 | [digital-clone-skill](https://github.com/AliceLJY/digital-clone-skill) | 从语料构建数字分身 |
 | [recallnest](https://github.com/AliceLJY/recallnest) | MCP 记忆工作台（LanceDB + Jina） |
 | [cc-shell](https://github.com/AliceLJY/cc-shell) | 轻量 Claude Code 聊天界面 |
